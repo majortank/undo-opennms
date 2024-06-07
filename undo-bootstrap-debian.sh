@@ -31,13 +31,13 @@ removePackages() {
   sudo apt-get purge -y opennms opennms-webapp-hawtio 1>>"${ERROR_LOG}" 2>>"${ERROR_LOG}"
   checkError "${?}"
   echo -n "Removing PostgreSQL                   ... "
-  sudo apt-get purge -y postgresql 1>>"${ERROR_LOG}" 2>>"${ERROR_LOG}"
+  sudo apt-get purge -y postgresql postgresql-contrib 1>>"${ERROR_LOG}" 2>>"${ERROR_LOG}"
   checkError "${?}"
   echo -n "Removing OpenJDK                      ... "
   sudo apt-get purge -y openjdk-17-jdk 1>>"${ERROR_LOG}" 2>>"${ERROR_LOG}"
   checkError "${?}"
   echo -n "Removing dependencies                 ... "
-  sudo apt-get purge -y gnupg2 curl apt-transport-https 1>>"${ERROR_LOG}" 2>>"${ERROR_LOG}"
+  sudo apt-get purge -y gnupg2 curl apt-transport-https lsb-release 1>>"${ERROR_LOG}" 2>>"${ERROR_LOG}"
   checkError "${?}"
   echo -n "Cleaning up APT cache                 ... "
   sudo apt-get autoremove -y 1>>"${ERROR_LOG}" 2>>"${ERROR_LOG}"
@@ -58,6 +58,12 @@ removeConfig() {
   echo -n "Removing OpenNMS home directory       ... "
   sudo rm -rf "${OPENNMS_HOME}" 1>>"${ERROR_LOG}" 2>>"${ERROR_LOG}"
   checkError "${?}"
+  echo -n "Removing PostgreSQL configuration     ... "
+  sudo rm -rf /etc/postgresql /var/lib/postgresql 1>>"${ERROR_LOG}" 2>>"${ERROR_LOG}"
+  checkError "${?}"
+  echo -n "Removing OpenJDK configuration        ... "
+  sudo rm -rf /etc/java-11-openjdk 1>>"${ERROR_LOG}" 2>>"${ERROR_LOG}"
+  checkError "${?}"
 }
 
 # Execute undo procedure
@@ -68,5 +74,5 @@ removePackages
 removeConfig
 
 echo ""
-echo "OpenNMS setup has been successfully undone."
+echo "OpenNMS setup and dependencies have been successfully undone."
 echo ""
